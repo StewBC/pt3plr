@@ -97,5 +97,6 @@ ERROR_CODE          = $72
 HTD_IN              = $73
 HTD_OUT_L           = $74
 HTD_OUT_H           = $75
-ZP_LAST_INDEX       = $76
+RANDOM              = $76
+ZP_LAST_INDEX       = $77
 ; 80+               = 120 bytes of NOTE data

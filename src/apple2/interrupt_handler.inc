@@ -91,7 +91,7 @@ done_time:
 	;=================================
 
 check_keyboard:
-
+	inc RANDOM	 ; SQW
 	jsr	get_key
 	tax
 	beq	exit_interrupt
@@ -191,14 +191,20 @@ key_right:
 	; quiet down the Mockingboard
 	; (otherwise will be stuck on last note)
 
+; SQW - New commands
 down_ten:
 	ldx #$10
 	cmp #$0C ; ','
 	beq quiet_exit
 
 up_ten:
-	ldx #08
+	ldx #$08
 	cmp #$0E ; '.'
+	beq quiet_exit
+
+shuffle:
+	ldx #$04
+	cmp #'S'
 	bne done_key
 
 quiet_exit:
@@ -227,5 +233,4 @@ interrupt_smc:
 								;============
 								; typical
 								; ???? cycles
-
 

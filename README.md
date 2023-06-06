@@ -1,10 +1,13 @@
 # Vince Weaver (deater)'s PT3_Player for ProDOS
-
+  
 This project is based on the work of deater.  Specifically https://github.com/deater/dos33fsprogs/tree/master/music/pt3_player inside of https://github.com/deater/dos33fsprogs  
   
-I modified this to work with ProDOS so that I can add more .pt3 files to the PT3 folder and have the player just play those files.  This version allows for up to 255 .PT3 files.  
+## Changes
   
-With so many files, skipping around is more tedious so the "," key will now skip down by 10 files and the "." key will skip up by 10 files.  
+1. I modified this to work with ProDOS so that I can add more .pt3 files to the PT3 folder and have the player just play those files.  This version allows for up to 255 .PT3 files.  
+2. With so many files, skipping around is more tedious so the "," key will now skip down by 10 files and the "." key will skip up by 10 files.  
+3. Pressing 'S' will shuffle all the songs and reset the current song to 1 so the newly shuffled list
+plays from start.  
   
 Prerequisites:  
 * cc65 is needed tp compile the code.  

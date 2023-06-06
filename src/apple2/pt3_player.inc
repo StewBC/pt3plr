@@ -153,7 +153,7 @@ check_done:
 
 				; else, either song finished or
 				; right pressed
-
+	; SQW - new commands below
 	tax
 	and #$40
 	bne plus_song
@@ -163,6 +163,12 @@ check_done:
 	txa
 	and #$10
 	bne up_ten_sonds
+shuffle_songs:
+	jsr do_shuffle
+	; Reseto so 1st file will play
+	ldx #0
+	stx WHICH_FILE
+	beq done_play
 
 plus_song:
 	jsr	increment_file
@@ -572,6 +578,7 @@ done_counting:
 
 
 
+; SQW - touched/added all the code below
 
 	;==================
 	; Get filename
@@ -582,7 +589,6 @@ done_counting:
 	; point INH:INL to it
 get_filename:
 
-	; SQW
 	lda WHICH_FILE
 	sta INL
 	lda #0
@@ -640,34 +646,6 @@ done_decrement:
 	; value in A, output in ASCII+$80 in which_10s:which_1s
 	; trashes X
 convert_decimal:
-
-; 	ldx	#'0'+$80
-; 	stx	which_1s_smc+1
-; 	stx	which_10s_smc+1
-
-; 	tax				; special case zero
-; 	beq	conv_decimal_done
-; conv_decimal_loop:
-; 	inc	which_1s_smc+1
-; which_1s_smc:
-; 	lda	#$d1
-; 	cmp	#':'+$80
-; 	bne	conv_decimal_not_10
-; 	lda	#'0'+$80
-; 	sta	which_1s_smc+1
-; 	inc	which_10s_smc+1
-; conv_decimal_not_10:
-; 	dex
-; 	bne	conv_decimal_loop
-
-; conv_decimal_done:
-; which_10s_smc:
-; 	lda	#$d1
-; 	sta	which_song_string,y
-; 	lda	which_1s_smc+1
-; 	sta	which_song_string+1,y
-; 	rts
-
 	sed             ; output gets added up in decimal.
 	sta HTD_IN
 	lda #0
@@ -711,6 +689,81 @@ htd1:
 
 table:      .word    1, 2, 4, 8, 16H, 32H, 64H, 128H
                 ; (Word directive puts low byte first.)
+
+do_shuffle:
+	; iteare over all the file names
+	ldx NUM_PT3_FILES
+shuffle_loop:
+	dex
+	cpx #$FF
+	bne :+
+	rts
+:
+	; turn index into a pointer
+	stx PTR1_L
+	lda #0
+	sta PTR1_H
+	asl PTR1_L
+	rol PTR1_H
+	asl PTR1_L
+	rol PTR1_H
+	asl PTR1_L
+	rol PTR1_H
+	asl PTR1_L
+	rol PTR1_H
+	clc
+	lda #<filenames
+	adc PTR1_L
+	sta PTR1_L
+	lda #>filenames
+	adc PTR1_H
+	sta PTR1_H
+	; get a random index
+ 	lda	RANDOM
+	beq :+
+	asl	a
+	bcc :++
+:
+	eor	#$1d
+:
+	sta	RANDOM
+	cmp NUM_PT3_FILES
+	bcc :+
+	sec
+	sbc NUM_PT3_FILES
+:
+	; turn random index into a pointer
+	sta PTR2_L
+	lda #0
+	sta PTR2_H
+	asl PTR2_L
+	rol PTR2_H
+	asl PTR2_L
+	rol PTR2_H
+	asl PTR2_L
+	rol PTR2_H
+	asl PTR2_L
+	rol PTR2_H
+	clc
+	lda #<filenames
+	adc PTR2_L
+	sta PTR2_L
+	lda #>filenames
+	adc PTR2_H
+	sta PTR2_H
+	; swap the two file names
+	ldy #$0F
+:
+	lda (PTR1_L),y;
+	; use (unused) index 255 as scratch
+	sta filenames+255*16,y
+	lda (PTR2_L),y
+	sta (PTR1_L),y
+	lda filenames+255*16,y
+	sta (PTR2_L),y
+	dey
+	bpl :-
+	jmp shuffle_loop
 
 ;==========
 ; filenames
