@@ -9,12 +9,12 @@ This project is based on the work of deater.  Specifically https://github.com/de
 3. Pressing 'S' will shuffle all the songs and reset the current song to 1 so the newly shuffled list
 plays from start.  
   
-Prerequisites:  
+## Prerequisites:  
 * cc65 is needed tp compile the code.  
 * GNU Make.  
 * Cadius - https://github.com/mach-kernel/cadius/releases - V1.4.5 is what I am using - This version understands the #nnXXXX appended to file names.  
   
-Assumptions:  
+## Assumptions:  
 This was only tested on Windows, so Makefile-po.mk has the line:  
 CA ?= cadius-145.exe  
 Also, this make of a po does not work if there is an sh.exe in the path - Cadius gives this error:  
@@ -22,6 +22,8 @@ cadius-145.exe addfile pt3plr.po /pt3plr pt3plr.system#FF2000
 C:\users\swessels\Apps\bin\cadius-145.exe v 1.4.5 (c) Brutal Deluxe 2011-2013.  
   - Add file 'pt3plr.system#FF2000' :  
   Error : Invalid Prodos Volume name : C:  
+  
+## Building  
   
 the command:  
 make po  
