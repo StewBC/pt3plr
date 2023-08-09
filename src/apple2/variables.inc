@@ -14,7 +14,6 @@ prodosIOBuffer: .res $400
 
 ;-----------------------------------------------------------------------------
 .segment "DATA"
-zp_save:    .res zp_size
 old_interrupt_handler:  .res 4
 .align $100
 filenames:  .res 256*16

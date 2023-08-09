@@ -288,13 +288,6 @@ remove_irq_smc1:
 	lda old_interrupt_handler+3
 	sta $03ff
 	cli
-    ; Restore ZP
-    ldx #<(ZP_LAST_INDEX - __ZP_START__)
-:
-    lda zp_save-1,x
-    sta <(__ZP_START__-1),x
-    dex
-    bne :-
     jsr MLI                                     ; quit using the ProDOS mli
 
     .byte   $65                                 ; ProDOS Quit request

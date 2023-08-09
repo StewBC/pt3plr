@@ -59,13 +59,6 @@ quitParam:
                       ;-----------------------------------------------------------------------------
 ; Call before doing anything else
 .proc init
-    ; Save ZP
-    ldx #<(ZP_LAST_INDEX - __ZP_START__)
-:
-    lda <(__ZP_START__-1),x
-    sta zp_save-1,x
-    dex
-    bne :-
     ; clear ZP storage
     lda #0
     ldx #<(ZP_LAST_INDEX - __ZP_START__)
