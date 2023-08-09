@@ -21,13 +21,22 @@
 
 ;-----------------------------------------------------------------------------
 .proc main
+    jmp     start
+    .byte   $EE, $EE        ; signature
+    .byte   65              ; pathname buffer length ($2005)
+str_path:
+    .res    65              ; pathname buffer ($2006)
 
+start:
     jsr init          ; Set ZP values to 0
+    lda str_path
+    bne cmd_line_file
     jsr loadFileNames ; Get a list of PT3 files in the PT3 folder
     bcs quit
     lda ERROR_CODE
     bne quit
 
+cmd_line_file:
     lda #$FF          ; Setup to load any length file (No error checking for too large files)
     sta readLength
     sta readLength+1
@@ -50,6 +59,13 @@ quitParam:
                       ;-----------------------------------------------------------------------------
 ; Call before doing anything else
 .proc init
+    ; Save ZP
+    ldx #<(ZP_LAST_INDEX - __ZP_START__)
+:
+    lda <(__ZP_START__-1),x
+    sta zp_save-1,x
+    dex
+    bne :-
     ; clear ZP storage
     lda #0
     ldx #<(ZP_LAST_INDEX - __ZP_START__)

@@ -162,7 +162,13 @@ check_done:
 	bne down_ten_songs
 	txa
 	and #$10
-	bne up_ten_sonds
+	bne up_ten_songs
+	txa
+	and #$08
+	bne shuffle_songs
+quit_player:
+	jmp do_quit_player
+
 shuffle_songs:
 	jsr do_shuffle
 	; Reseto so 1st file will play
@@ -187,7 +193,7 @@ down_ten_songs:
 	beq done_play
 
 
-up_ten_sonds:
+up_ten_songs:
 	ldx #10
 :
 	jsr	increment_file
@@ -267,8 +273,38 @@ new_song:
 	; Load in PT3 file
 	;===========================
 
-	jsr	get_filename
+	lda main::str_path	; SQW check if it's command line or jukebox
+	beq jukebox
+	cmp #$AF
+	bne cmd_line_play
+	jmp do_quit_player	; If path is / ($AF) then the song has played, so quit
+cmd_line_play:
+    clc               ; play the command line file
+    adc #1
+    tay
+    adc PATHNAME
+    sta PATHNAME
+    tax
+    lda #$AF
+    sta main::str_path
+    lda #1
+    sta NUM_PT3_FILES
+    dey
+:    
+    lda main::str_path,y
+    sta PATHNAME,x
+    dex
+    dey
+    bpl :-
 
+	lda #<(PATHNAME+1)
+	sta INL
+	lda #>(PATHNAME+1)
+	sta INH
+	bne :+		; BRA over jukebox load
+jukebox:
+	jsr	get_filename
+:
 	lda	#8		; print filename to screen
 	sta	CH
 	;lda	#21
@@ -310,9 +346,16 @@ done_name_loop:
 
 	; open and read a file
 	; loads to whatever it was BSAVED at (default is $4000)
+	lda main::str_path	; SQW if command line, name at PATHNAME already
+	cmp #$AF
+	bne juke_read
+    jsr fileLoad		; just load that file
+	bcc :+
+	jmp do_quit_player	
 
+juke_read:
 	jsr	read_file		; read PT3 file from disk
-
+:
 
 	;=========================
 	; Print Info
@@ -478,7 +521,7 @@ frame_count_loop:
 	jsr	pt3_set_pattern
 
 	lda	DONE_SONG
-        bne	done_counting
+    bne	done_counting
 
 fc_pattern_good:
 	ldx     current_subframe_smc+1	;;ldx     #(NOTE_STRUCT_SIZE*0)

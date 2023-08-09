@@ -174,6 +174,18 @@ mockingboard_setup_interrupt:
 	; Check for Apple IIc
 	;===========================
 	; it does interrupts differently
+	; SQW - Save old IRQ vectors
+	lda	$c08b			; disable ROM (enable language card)
+	lda	$c08b
+	lda $fffe					; SQW save old address
+	sta old_interrupt_handler
+	lda $ffff
+	sta old_interrupt_handler+1
+	lda $03fe					; SQW save old address
+	sta old_interrupt_handler+2
+	lda $03ff
+	sta old_interrupt_handler+3
+	; SQW - Done saving old vectros
 
 	lda	$FBB3           ; IIe and newer is $06
 	cmp	#6
@@ -258,3 +270,37 @@ setup_irq_smc6:
 				; clear interrupt and start counting
 
 	rts
+
+; SQW - Code ti quit the player by removing vectors and
+; silencing the card
+do_quit_player:
+	lda #$7F			; disable interrupts in 6522
+remove_irq_smc1:	
+	sta MOCK_6522_IER
+	lda	$c08b			; disable ROM (enable language card)
+	lda	$c08b
+	lda old_interrupt_handler
+	sta $fffe
+	lda old_interrupt_handler+1
+	sta $ffff
+	lda old_interrupt_handler+2
+	sta $03fe
+	lda old_interrupt_handler+3
+	sta $03ff
+	cli
+    ; Restore ZP
+    ldx #<(ZP_LAST_INDEX - __ZP_START__)
+:
+    lda zp_save-1,x
+    sta <(__ZP_START__-1),x
+    dex
+    bne :-
+    jsr MLI                                     ; quit using the ProDOS mli
+
+    .byte   $65                                 ; ProDOS Quit request
+    .addr   * + 2
+    .byte   4
+    .byte   0
+    .word   0000
+    .byte   0
+    .word   0000

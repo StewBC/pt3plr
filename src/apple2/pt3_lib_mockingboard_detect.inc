@@ -136,6 +136,8 @@ mockingboard_patch:
 	sta	setup_irq_smc4+2	; 37
 	sta	setup_irq_smc5+2	; 38
 	sta	setup_irq_smc6+2	; 39
+	
+	sta	remove_irq_smc1+2	; 40 SQW
 
 	rts
 .endif

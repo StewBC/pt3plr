@@ -205,6 +205,11 @@ up_ten:
 shuffle:
 	ldx #$04
 	cmp #'S'
+	beq quiet_exit
+
+quit:
+	ldx #$02
+	cmp #'Q'
 	bne done_key
 
 quiet_exit:

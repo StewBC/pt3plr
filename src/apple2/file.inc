@@ -105,10 +105,8 @@ readName:
     jsr MLI
     .byte OPEN_CALL
     .word openParam
-    bcc :+
-    jmp error
+    bcs error
 
-: 
     lda openRef
     sta readRef
     sta closeRef
