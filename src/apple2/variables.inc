@@ -5,9 +5,6 @@
 ; This is free and unencumbered software released into the public domain.
 
 ;-----------------------------------------------------------------------------
-zp_size = ZP_LAST_INDEX         ; all this for command line
-zp_sisz = zp_size - __ZP_START__
-
 .segment "DIRBUF"
 .align $100
 prodosIOBuffer: .res $400
