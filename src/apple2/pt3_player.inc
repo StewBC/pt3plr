@@ -289,7 +289,7 @@ cmd_line_play:
     sta main::str_path
     lda #1
     sta NUM_PT3_FILES
-    dey
+    inx
 :    
     lda main::str_path,y
     sta PATHNAME,x

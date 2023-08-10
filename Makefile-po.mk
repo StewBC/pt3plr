@@ -18,14 +18,9 @@ REMOVES += $(PO)
 .PHONY: po
 po: $(PO)
 
-$(NAME).system:
-	$(call CP, $(subst \,/,$(shell cl65 --print-target-path)/apple2/util/loader.system) $(NAME).system#FF1000)
-
-$(PO): $(NAME).apple2 $(NAME).system
+$(PO): $(NAME).apple2
 	$(call CP, apple2/template.po $@)
-	$(CP) $(NAME).apple2 $(NAME)#062000
-	$(CA) addfile $(NAME).po /$(NAME) $(NAME).system#FF1000
-	$(CA) addfile $(NAME).po /$(NAME) $(NAME)#062000
+	$(CP) $(NAME).apple2 $(NAME).system#FF2000
+	$(CA) addfile $(NAME).po /$(NAME) $(NAME).system#FF2000
 	$(CA) addfolder $(NAME).po /$(NAME)/PT3 PT3
-	$(RM) $(NAME).system#FF1000
-	$(RM) $(NAME)#062000
+	$(RM) $(NAME).system#FF2000
