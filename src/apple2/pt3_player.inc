@@ -279,23 +279,18 @@ new_song:
 	bne cmd_line_play
 	jmp do_quit_player	; If path is / ($AF) then the song has played, so quit
 cmd_line_play:
-    clc               ; play the command line file
-    adc #1
-    tay
-    adc PATHNAME
-    sta PATHNAME
-    tax
-    lda #$AF
-    sta main::str_path
-    lda #1
-    sta NUM_PT3_FILES
-    inx
-:    
-    lda main::str_path,y
-    sta PATHNAME,x
-    dex
-    dey
-    bpl :-
+	tax			; play the command line file
+	lda #$AF		; set path to / ($AF) so quits after playing
+	sta main::str_path
+	lda #1
+	sta NUM_PT3_FILES
+
+	stx PATHNAME
+:
+	lda main::str_path,x	; copy path from command line to our path buffer
+	sta PATHNAME,x
+	dex
+	bne :-
 
 	lda #<(PATHNAME+1)
 	sta INL
